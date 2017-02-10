@@ -3,6 +3,8 @@ package dgorbunov.stock.common;
 import dgorbunov.stock.domain.Share;
 import dgorbunov.stock.domain.Trader;
 import dgorbunov.stock.domain.TraderBalance;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,14 +34,24 @@ public class StockTestingUtils {
     }
 
     public static void assertShareBalance(
-            Map<Trader, TraderBalance> balances,
-            Trader trader,
-            Share share,
-            Integer quantity
+            @NotNull Map<Trader, TraderBalance> balances,
+            @NotNull Trader trader,
+            @NotNull Share share,
+            @Nullable Integer expectedQuantity
     ) {
         TraderBalance traderBalance = balances.get(trader);
         assertNotNull(traderBalance);
-        assertEquals(quantity, traderBalance.getShareBalance(share));
+        assertEquals(expectedQuantity, traderBalance.getShareBalance(share));
     }
 
+    public static void assertBalancesEqual(
+            @NotNull List<Share> shares,
+            @NotNull TraderBalance expected,
+            @NotNull TraderBalance actual
+    ) {
+        assertEquals(expected.getMoney(), actual.getMoney());
+        for (Share share : shares) {
+            assertEquals(expected.getShareBalance(share), actual.getShareBalance(share));
+        }
+    }
 }

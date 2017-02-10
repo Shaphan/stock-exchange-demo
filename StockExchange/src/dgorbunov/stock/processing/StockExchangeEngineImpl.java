@@ -48,17 +48,6 @@ public class StockExchangeEngineImpl implements StockExchangeEngine {
     private final ListMultimap<BidKey, Bid> bids = ArrayListMultimap.create();
 
     /**
-     * Небольшая оптимизация по производительности:
-     * Ключ, который мы используем для поиска заявок, которые матчатся с текущей.
-     * Т.к. тип сделки включен в ключ, то при матчинге нам нужно:
-     * 1) осуществить поиск по ключу с типом заявки, противоположным обрабатываемой на данной итерации заявки;
-     * 2) если матчинг не удался, добавить в мап запись с ключом, соответствующим заявке.
-     * Поиск по map вполне можно производить с мутабельным ключом. Главное, чтобы в map не попал мутабельный ключ.
-     */
-    @Nullable
-    private MutableBidKey currentSearchBidKey;
-
-    /**
      * Конструктор.
      *
      * @param traderBalances Исходные балансы по клиентам биржи.
@@ -77,11 +66,8 @@ public class StockExchangeEngineImpl implements StockExchangeEngine {
         Bid bid = bidSupplier.get();
 
         while (bid != null) {
-            if (currentSearchBidKey == null) {
-                currentSearchBidKey = MutableBidKey.createToMatchBid(bid);
-            } else {
-                currentSearchBidKey.updateToMatchBid(bid);
-            }
+            BidKey currentSearchBidKey = new BidKeyImpl(bid.getShare(), bid.getBidType().invert(),
+                    bid.getPrice(), bid.getQuantity());
 
             Trader trader = bid.getTrader();
             Optional<Bid> matchingBidOptional = bids.get(currentSearchBidKey).stream()
@@ -105,7 +91,7 @@ public class StockExchangeEngineImpl implements StockExchangeEngine {
 
                 bids.remove(currentSearchBidKey, matchingBid);
             } else {
-                ImmutableBidKey newBidKey = new ImmutableBidKey(bid);
+                BidKey newBidKey = new BidKeyImpl(bid);
                 bids.put(newBidKey, bid);
             }
             bid = bidSupplier.get();

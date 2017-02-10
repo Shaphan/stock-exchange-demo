@@ -58,7 +58,6 @@ public final class TraderBalance {
 
     /**
      * Создает копию данного баланса.
-     * @return
      */
     public TraderBalance copy() {
         Map<Share, Integer> shareBalancesCopy = new HashMap<>(shareBalances.size(), 1.0f);
@@ -67,20 +66,6 @@ public final class TraderBalance {
         }
         return  new TraderBalance(money, shareBalancesCopy);
     }
-
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (!(o instanceof TraderBalance)) return false;
-//        TraderBalance that = (TraderBalance) o;
-//        return money == that.money &&
-//                Objects.equals(shareBalances, that.shareBalances);
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(money, shareBalances);
-//    }
 
     @Override
     public String toString() {

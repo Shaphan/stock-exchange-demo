@@ -1,5 +1,6 @@
 package dgorbunov.stock.processing;
 
+import dgorbunov.stock.domain.Bid;
 import dgorbunov.stock.domain.BidType;
 import dgorbunov.stock.domain.Share;
 import org.jetbrains.annotations.NotNull;
@@ -7,19 +8,25 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 /**
- * Created by dgorbunov on 04.02.2017.
+ * Реализация ключа для матчинга заявок.
  */
-public abstract class AbstractBidKey implements BidKey {
-    protected Share share;
-    protected BidType bidType;
-    protected int price;
-    protected int quantity;
+public final class BidKeyImpl implements BidKey {
+    @NotNull
+    private final Share share;
+    @NotNull
+    private final BidType bidType;
+    private final int price;
+    private final int quantity;
 
-    protected AbstractBidKey(Share share, BidType bidType, int price, int quantity) {
+    public BidKeyImpl(@NotNull Share share, @NotNull BidType bidType, int price, int quantity) {
         this.share = share;
         this.bidType = bidType;
         this.price = price;
         this.quantity = quantity;
+    }
+
+    public BidKeyImpl(@NotNull Bid bid) {
+        this(bid.getShare(), bid.getBidType(), bid.getPrice(), bid.getQuantity());
     }
 
     @NotNull

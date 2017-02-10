@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 import static dgorbunov.stock.common.StockTestingPredefines.*;
+import static dgorbunov.stock.common.StockTestingUtils.assertBalancesEqual;
 import static dgorbunov.stock.common.StockTestingUtils.assertShareBalance;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -50,7 +51,7 @@ public class StockExchangeEngineTests {
 
         // region Assert
         assertShareBalance(resultingBalances, Trader1, ShareA, 100);
-        assertBalancesEqual(Shares, traderBalances, resultingBalances);
+        assertTraderBalancesEqual(Shares, traderBalances, resultingBalances);
         // endregion Assert
 
         // region Arrange
@@ -185,7 +186,7 @@ public class StockExchangeEngineTests {
         return result;
     }
 
-    private static void assertBalancesEqual(
+    private static void assertTraderBalancesEqual(
             @NotNull List<Share> shares,
             @NotNull Map<Trader, TraderBalance> expected,
             @NotNull Map<Trader, TraderBalance> actual
@@ -195,10 +196,7 @@ public class StockExchangeEngineTests {
             TraderBalance expectedTraderBalance = expectedEntry.getValue();
             TraderBalance actualTraderBalance = actual.get(expectedEntry.getKey());
             assertNotNull(actualTraderBalance);
-            assertEquals(expectedTraderBalance.getMoney(), actualTraderBalance.getMoney());
-            for (Share share : shares) {
-                assertEquals(expectedTraderBalance.getShareBalance(share), actualTraderBalance.getShareBalance(share));
-            }
+            assertBalancesEqual(shares, expectedTraderBalance, actualTraderBalance);
         }
     }
 

@@ -12,6 +12,7 @@ import org.apache.commons.lang3.time.StopWatch;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class Main {
 
             Map<Trader, TraderBalance> traderBalances;
             try (FileInputStream inputStream = new FileInputStream(args[0])) {
-                try (InputStreamReader reader = new InputStreamReader(inputStream, Charset.forName("UTF-8"))
+                try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)
                 ) {
                     BalancesDeserializer deserializer = new BalancesDeserializer(SHARES);
                     traderBalances = deserializer.deserialize(reader);
@@ -50,7 +51,7 @@ public class Main {
             }
             StockExchangeEngine engine = new StockExchangeEngineImpl(traderBalances);
             try (FileInputStream inputStream = new FileInputStream(args[1])) {
-                try (InputStreamReader reader = new InputStreamReader(inputStream, Charset.forName("UTF-8"))) {
+                try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
                     try (BidsSupplier bidsSupplier = new BidsSupplier(reader, traderBalances.keySet(), SHARES)) {
                         engine.processBids(bidsSupplier);
                     }
@@ -58,7 +59,7 @@ public class Main {
             }
             traderBalances = engine.getTraderBalancesModifiable();
             try (FileOutputStream outputStream = new FileOutputStream(args[2])) {
-                try (OutputStreamWriter writer = new OutputStreamWriter(outputStream, Charset.forName("UTF-8"))) {
+                try (OutputStreamWriter writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {
                     BalancesSerializer serializer = new BalancesSerializer(SHARES);
                     serializer.serialize(traderBalances, writer);
                 }
